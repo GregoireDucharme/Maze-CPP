@@ -19,6 +19,8 @@ Parser::Parser(int ac, char **argv)
 {
   load_bin = false;
   new_maze = false;
+  new_maze_ga = false;
+  new_maze_ge = false;
   save_bin = false;
   save_svg = false;
   seed = 0;
@@ -26,21 +28,25 @@ Parser::Parser(int ac, char **argv)
   height = 0;
 
   for (int i = 0; i < ac; i++) {
-    if (!strcmp(ARG_LOAD_BINARY, argv[i]) && ac > i + 1) {
+    if (ARG_LOAD_BINARY.compare(argv[i]) && ac > i + 1) {
       load_bin = true;
       load_bin_file = argv[i + 1];
     }
-    else if (!strcmp(ARG_SAVE_BINARY, argv[i]) && ac > i + 1) {
+    else if (ARG_SAVE_BINARY.compare(argv[i]) && ac > i + 1) {
       save_bin = true;
       save_bin_file = argv[i + 1];
     }
-    else if (!strcmp(ARG_SAVE_SVG, argv[i]) && ac > i + 1) {
+    else if (ARG_SAVE_SVG.compare(argv[i]) && ac > i + 1) {
       save_svg = true;
       save_svg_file = argv[i + 1];
     }
-    else if (!strcmp(ARG_SEED, argv[i]) && ac > i + 2) {
-      new_maze = true;
-      if (ac > i + 3 && isNumeric(argv[i + 3])) {
+    else if ((!(new_maze = ARG_G_SEED.compare(argv[i])) ||
+	      !(new_maze_ga = ARG_GA_SEED.compare(argv[i])) ||
+	      !(new_maze_ge = ARG_GE_SEED.compare(argv[i]))) &&
+	     ac > i + 2) {
+      if (ac > i + 3 && isNumeric(argv[i + 1]) &&
+	  isNumeric(argv[i + 2]) &&
+	  isNumeric(argv[i + 3])) {
 	seed = std::stoi(argv[i + 1]);
 	width = std::stoi(argv[i + 2]);
 	height = std::stoi(argv[i + 3]);
@@ -59,26 +65,42 @@ bool Parser::isValid() const
   return true;
 }
 
+bool	Parser::dispatchNewMaze()
+{
+  std::cout << "Generating new maze with seed "<<  seed << std ::endl;
+  if (!new_maze)
+    return (maze.loadNewMaze(seed, width, height));
+  else if (!new_maze_ge)
+    return (maze.loadNewMaze(seed, width, height));
+  else if (!new_maze_ga)
+    return(maze.loadNewMaze(seed, width, height));
+  return false;
+}
 
 bool	Parser::run()
 {
-  if (load_bin && !new_maze) {
+  // Check if parameter are correct
+  if (load_bin && new_maze && new_maze_ga && new_maze_ge) {
     std::cout << "Loading binary file "<<  load_bin_file << std ::endl;
     if (!maze.loadFromBinaryFile(load_bin_file)) {
       std::cerr << "Could not load from binary file " << load_bin_file << std::endl;
       return false;
     }
   }
-  else if (new_maze && !load_bin) {
-    std::cout << "Generating new maze with seed "<<  seed << std ::endl;
-    if (!maze.loadNewMaze(seed, width, height)) {
+  else if (((!new_maze && new_maze_ga && new_maze_ge) ||
+	    (new_maze && !new_maze_ga && new_maze_ge) ||
+	    (new_maze && new_maze_ga && !new_maze_ge)) &&
+	   !load_bin) {
+    if (!dispatchNewMaze()) {
       std::cerr << "Could not generate new file " << load_bin_file << std::endl;
       return false;
     }
   }
   else {
     std::cerr << "Error, maze not specified" << std::endl;
-    std::cerr << "Use "<< ARG_SEED << " to generate one";
+    std::cerr << "Use "<< ARG_G_SEED << " to generate one";
+    std::cerr << "Or use "<< ARG_GE_SEED << " to generate one";
+    std::cerr << "Or use "<< ARG_GA_SEED << " to generate one";
     std::cerr << "Or " << ARG_LOAD_BINARY <<" to load from binary file" << std::endl;
     return false;
   }

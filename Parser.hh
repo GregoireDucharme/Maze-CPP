@@ -11,14 +11,25 @@
 # include "Maze.hh"
 
 /* Flag used to defined the parameter of the binary file */
-const char ARG_LOAD_BINARY[] = "--lb";
-const char ARG_SAVE_BINARY[] = "--sb";
-const char ARG_SAVE_SVG[] = "--sv";
-const char ARG_SEED[] = "--g";
+
+const std::string ARG_LOAD_BINARY = "--lb";
+const std::string ARG_SAVE_BINARY = "--sb";
+const std::string ARG_SAVE_SVG = "--sv";
+
+const std::string ARG_G_SEED = "--g";
+const std::string ARG_GA_SEED = "--ga";
+const std::string ARG_GE_SEED = "--ge";
+
+const std::string ARG_SOLVE_PM = "--pm";
+const std::string ARG_SOLVE_PE = "--pe";
+const std::string ARG_SOLVE_PB = "--pb";
+const std::string ARG_SOLVE_PD = "--pd";
 
 class Parser {
   bool load_bin;
-  bool new_maze;
+  int new_maze;
+  int new_maze_ga;
+  int new_maze_ge;
   bool save_bin;
   bool save_svg;
   std::string load_bin_file;
@@ -29,6 +40,7 @@ class Parser {
   int height;
   Maze maze;
   bool isNumeric(char*) const;
+  bool dispatchNewMaze();
 
 public:
   Parser(int ac, char **argv);
