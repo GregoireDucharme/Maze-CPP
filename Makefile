@@ -25,11 +25,7 @@ $(NAME):	$(OBJ)
 	@$(ECHO) "\E[33;5m\nCompilation done.\n\E[33;0m"
 
 clean:
-	$(RM) $(OBJ)
+	$(RM) $(OBJ) $(NAME)
 	@$(ECHO) "\E[33;5m\nClean done.\n\E[33;0m"
 
-fclean:		clean
-	$(RM) $(NAME)
-	@$(ECHO) "\E[33;5m\nFclean done.\n\E[33;0m"
-
-re:		fclean all
+re:		clean all
