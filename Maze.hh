@@ -21,10 +21,10 @@ class Maze {
   int	_height = 0;
   unsigned int	_countEdges = 0;
   std::vector<Edge>	_edges;
-  bool checkMap(std::vector<std::vector<bool>>) const;
+  bool checkMap(std::vector<std::vector<short>>) const;
   bool initValues(int, int, unsigned int = 0);
-  void fillMapAldousBroder(std::vector<std::vector<bool>>, std::mt19937, int, int);
-  void fillMapEller(std::vector<std::vector<bool>>, std::mt19937, int, int);
+  void fillMapAldousBroder(std::vector<std::vector<short>>, std::mt19937, int, int);
+  void fillMapEller(std::vector<std::vector<short>>, std::mt19937);
 
 public:
   enum	algorithm_type {

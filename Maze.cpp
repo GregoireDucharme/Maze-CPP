@@ -4,20 +4,26 @@
 #include "Maze.hh"
 
 /* Check if the 2D map of the maze still contains unexplored parts */
-bool	Maze::checkMap(std::vector<std::vector<bool>> map) const
+#include <cstdlib>
+
+bool	Maze::checkMap(std::vector<std::vector<short>> map) const
 {
   int x = 0, y = 0;
 
-  while (x < _width) {
-    y = 0;
-    while (y < _height) {
+  system("clear");
+  while (y < _height) {
+    x = 0;
+    while (x < _width) {
       if (map[x][y] == false) {
-	return false;
+	//return false;
       }
-      y++;
+      std::cout << map[x][y] << "|";
+      x++;
     }
-    x++;
+    std::cout << std::endl;
+    y++;
   }
+  std::cin.ignore();
   return true;
 }
 
@@ -35,16 +41,62 @@ bool	Maze::initValues(int width, int height, unsigned int countEdges)
 }
 
 /* Filling the 2D map and instanciating the edges */
-void	Maze::fillMapEller(std::vector<std::vector<bool>> map,
-				  std::mt19937 generator,
-				  int x, int y)
+void	Maze::fillMapEller(std::vector<std::vector<short>> map,
+			   std::mt19937 generator)
 {
-  (void)map;
-  (void)generator;
-  (void)x;
-  (void)y;
+  int	x = 0, x1 = 0, y = 0, val = 0, prevValue = 0, minValue = 0;;
+  bool	check = false;
+
+  while (y < _height) {
+    /* Init each cell to a value */
+    x = 0;
+    checkMap(map);
+    minValue = val;
+    while (x < _width) {
+      if (!map[x][y])
+	map[x][y] = ++val;
+      x++;
+    }
+    checkMap(map);
+    /* Merge randomly cells */
+    x = 1;
+    while (x < _width) {
+      if (map[x][y] > minValue && generator() % 2) {
+	map[x][y] = map[x - 1][y];
+      }
+      x++;
+    }
+    checkMap(map);
+    y++;
+    check = false;
+    if (y < _height) {
+      while (!check) {
+	x = 0;
+	while (x < _width) {
+	  if (map[x][y] == map[x][y - 1] || generator() % 2) {
+	    map[x][y] = map[x][y - 1];
+	  }
+	  x++;
+	}
+	x = 0;
+	x1 = 0;
+	check = true;
+	while (x < _width) {
+	  while (x1 < _width) {
+	    if (map[x][y - 1] == map[x][y])
+	      x1 = _width;
+	    x1++;
+	  }
+	  if (x1 == _width)
+	    check = false;
+	  x++;
+	}
+	checkMap(map);
+      }
+    }
+  }
 }
-void	Maze::fillMapAldousBroder(std::vector<std::vector<bool>> map,
+void	Maze::fillMapAldousBroder(std::vector<std::vector<short>> map,
 				  std::mt19937 generator,
 				  int x, int y)
 {
@@ -86,18 +138,18 @@ bool	Maze::loadNewMaze(int seed, int width, int height, algorithm_type type)
   if (initValues(width, height) == false) {
     return false;
   }
-  std::vector<std::vector<bool>> map;
+  std::vector<std::vector<short>> map;
   map.resize(_width);
   int x = 0, y = 0;
   while (x < _width) {
     y = 0;
     map[x].resize(_height);
     while (y < _height) {
-      map[x][y] = false;
+      map[x][y] = 0;
       y++;
     }
     x++;
-    }
+  }
   std::mt19937 generator(seed);
   x = generator() % _width;
   y = generator() % _height;
@@ -107,7 +159,7 @@ bool	Maze::loadNewMaze(int seed, int width, int height, algorithm_type type)
       fillMapAldousBroder(map, generator, x, y);
       break;
     case ELLER:
-      fillMapAldousBroder(map, generator, x, y);
+      fillMapEller(map, generator);
       break;
     }
   return true;

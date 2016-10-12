@@ -40,6 +40,7 @@ class Parser {
   Maze maze;
   bool isNumeric(char*) const;
   bool dispatchNewMaze();
+  void initGenerationAlgorithm(char *);
 
 public:
   Parser(int ac, char **argv);

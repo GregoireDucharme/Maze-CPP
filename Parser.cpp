@@ -13,6 +13,17 @@ bool	Parser::isNumeric(char *str) const
   return true;
 }
 
+
+void	Parser::initGenerationAlgorithm(char *argv)
+{
+  if (!ARG_G_SEED.compare(argv))
+    new_maze = true;
+  else if (!ARG_GA_SEED.compare(argv))
+    new_maze_ga = true;
+  else if (!ARG_GE_SEED.compare(argv))
+    new_maze_ge = true;
+}
+
 /* Only constructor of the Parser class */
 /* Usage de const char defined in Parser.hh */
 Parser::Parser(int ac, char **argv)
@@ -28,21 +39,21 @@ Parser::Parser(int ac, char **argv)
   height = 0;
 
   for (int i = 0; i < ac; i++) {
-    if (ARG_LOAD_BINARY.compare(argv[i]) && ac > i + 1) {
+    if (!ARG_LOAD_BINARY.compare(argv[i]) && ac > i + 1) {
       load_bin = true;
       load_bin_file = argv[i + 1];
     }
-    else if (ARG_SAVE_BINARY.compare(argv[i]) && ac > i + 1) {
+    else if (!ARG_SAVE_BINARY.compare(argv[i]) && ac > i + 1) {
       save_bin = true;
       save_bin_file = argv[i + 1];
     }
-    else if (ARG_SAVE_SVG.compare(argv[i]) && ac > i + 1) {
+    else if (!ARG_SAVE_SVG.compare(argv[i]) && ac > i + 1) {
       save_svg = true;
       save_svg_file = argv[i + 1];
     }
-    else if ((!(new_maze = ARG_G_SEED.compare(argv[i])) ||
-	      !(new_maze_ga = ARG_GA_SEED.compare(argv[i])) ||
-	      !(new_maze_ge = ARG_GE_SEED.compare(argv[i]))) &&
+    else if ((!ARG_G_SEED.compare(argv[i]) ||
+	      !ARG_GA_SEED.compare(argv[i]) ||
+	      !ARG_GE_SEED.compare(argv[i])) &&
 	     ac > i + 2) {
       if (ac > i + 3 && isNumeric(argv[i + 1]) &&
 	  isNumeric(argv[i + 2]) &&
@@ -50,11 +61,14 @@ Parser::Parser(int ac, char **argv)
 	seed = std::stoi(argv[i + 1]);
 	width = std::stoi(argv[i + 2]);
 	height = std::stoi(argv[i + 3]);
+	initGenerationAlgorithm(argv[i]);
       }
-      else {
+      else if (isNumeric(argv[i + 1]) &&
+	       isNumeric(argv[i + 2])) {
 	seed = time(0);
 	width = std::stoi(argv[i + 1]);
 	height = std::stoi(argv[i + 2]);
+	initGenerationAlgorithm(argv[i]);
       }
     }
   }
@@ -68,9 +82,9 @@ bool Parser::isValid() const
 bool	Parser::dispatchNewMaze()
 {
   std::cout << "Generating new maze with seed "<<  seed << std ::endl;
-  if (!new_maze || !new_maze_ga)
+  if (new_maze || new_maze_ga)
     return (maze.loadNewMaze(seed, width, height, Maze::ALDOUS_BRODER));
-  else if (!new_maze_ge)
+  else if (new_maze_ge)
     return(maze.loadNewMaze(seed, width, height, Maze::ELLER));
   return false;
 }
@@ -85,9 +99,9 @@ bool	Parser::run()
       return false;
     }
   }
-  else if (((!new_maze && new_maze_ga && new_maze_ge) ||
-	    (new_maze && !new_maze_ga && new_maze_ge) ||
-	    (new_maze && new_maze_ga && !new_maze_ge)) &&
+  else if (((new_maze && !new_maze_ga && !new_maze_ge) ||
+	    (!new_maze && new_maze_ga && !new_maze_ge) ||
+	    (!new_maze && !new_maze_ga && new_maze_ge)) &&
 	   !load_bin) {
     if (!dispatchNewMaze()) {
       std::cerr << "Could not generate new file " << load_bin_file << std::endl;
@@ -96,9 +110,9 @@ bool	Parser::run()
   }
   else {
     std::cerr << "Error, maze not specified" << std::endl;
-    std::cerr << "Use "<< ARG_G_SEED << " to generate one";
-    std::cerr << "Or use "<< ARG_GE_SEED << " to generate one";
-    std::cerr << "Or use "<< ARG_GA_SEED << " to generate one";
+    std::cerr << "Use "<< ARG_G_SEED << " to generate one" << std::endl;
+    std::cerr << "Or use "<< ARG_GE_SEED << " to generate one" << std::endl;
+    std::cerr << "Or use "<< ARG_GA_SEED << " to generate one" << std::endl;
     std::cerr << "Or " << ARG_LOAD_BINARY <<" to load from binary file" << std::endl;
     return false;
   }
