@@ -17,22 +17,26 @@ const int UP = 2;
 const int DOWN = 3;
 
 class Maze {
-
   int	_width = 0;
   int	_height = 0;
   unsigned int	_countEdges = 0;
   std::vector<Edge>	_edges;
   bool checkMap(std::vector<std::vector<bool>>) const;
   bool initValues(int, int, unsigned int = 0);
-  void fillMap(std::vector<std::vector<bool>>, std::mt19937, int, int);
+  void fillMapAldousBroder(std::vector<std::vector<bool>>, std::mt19937, int, int);
+  void fillMapEller(std::vector<std::vector<bool>>, std::mt19937, int, int);
 
 public:
+  enum	algorithm_type {
+    ALDOUS_BRODER = 0,
+    ELLER = 1
+  };
   Maze() {}
   bool saveToSvgFile(std::string) const;
   bool saveToBinaryFile(std::string) const;
   bool isValid() const;
   bool loadFromBinaryFile(std::string);
-  bool loadNewMaze(int, int, int);
+  bool loadNewMaze(int, int, int, algorithm_type);
 };
 
 #endif

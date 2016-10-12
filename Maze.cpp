@@ -35,8 +35,18 @@ bool	Maze::initValues(int width, int height, unsigned int countEdges)
 }
 
 /* Filling the 2D map and instanciating the edges */
-void	Maze::fillMap(std::vector<std::vector<bool>> map, std::mt19937 generator,
-		      int x, int y)
+void	Maze::fillMapEller(std::vector<std::vector<bool>> map,
+				  std::mt19937 generator,
+				  int x, int y)
+{
+  (void)map;
+  (void)generator;
+  (void)x;
+  (void)y;
+}
+void	Maze::fillMapAldousBroder(std::vector<std::vector<bool>> map,
+				  std::mt19937 generator,
+				  int x, int y)
 {
   int previousX, previousY, way;
   map[x][y] = true;
@@ -71,7 +81,7 @@ void	Maze::fillMap(std::vector<std::vector<bool>> map, std::mt19937 generator,
 }
 
 /* If no maze to load is specified then create a new one */
-bool	Maze::loadNewMaze(int seed, int width, int height)
+bool	Maze::loadNewMaze(int seed, int width, int height, algorithm_type type)
 {
   if (initValues(width, height) == false) {
     return false;
@@ -90,8 +100,16 @@ bool	Maze::loadNewMaze(int seed, int width, int height)
     }
   std::mt19937 generator(seed);
   x = generator() % _width;
-  y = generator() % _height;  
-  fillMap(map, generator, x, y);
+  y = generator() % _height;
+  switch (type)
+    {
+    case ALDOUS_BRODER:
+      fillMapAldousBroder(map, generator, x, y);
+      break;
+    case ELLER:
+      fillMapAldousBroder(map, generator, x, y);
+      break;
+    }
   return true;
 }
 

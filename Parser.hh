@@ -11,7 +11,6 @@
 # include "Maze.hh"
 
 /* Flag used to defined the parameter of the binary file */
-
 const std::string ARG_LOAD_BINARY = "--lb";
 const std::string ARG_SAVE_BINARY = "--sb";
 const std::string ARG_SAVE_SVG = "--sv";

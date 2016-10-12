@@ -68,12 +68,10 @@ bool Parser::isValid() const
 bool	Parser::dispatchNewMaze()
 {
   std::cout << "Generating new maze with seed "<<  seed << std ::endl;
-  if (!new_maze)
-    return (maze.loadNewMaze(seed, width, height));
+  if (!new_maze || !new_maze_ga)
+    return (maze.loadNewMaze(seed, width, height, Maze::ALDOUS_BRODER));
   else if (!new_maze_ge)
-    return (maze.loadNewMaze(seed, width, height));
-  else if (!new_maze_ga)
-    return(maze.loadNewMaze(seed, width, height));
+    return(maze.loadNewMaze(seed, width, height, Maze::ELLER));
   return false;
 }
 
