@@ -16,15 +16,19 @@ const int RIGHT = 1;
 const int UP = 2;
 const int DOWN = 3;
 
+const bool HORIZONTAL = true;
+const bool VERTICAL = false;
+
 class Maze {
   int	_width = 0;
   int	_height = 0;
   unsigned int	_countEdges = 0;
   std::vector<Edge>	_edges;
-  bool checkMap(std::vector<std::vector<short>>) const;
+  bool checkMap(std::vector<std::vector<int>>) const;
   bool initValues(int, int, unsigned int = 0);
-  void fillMapAldousBroder(std::vector<std::vector<short>>, std::mt19937, int, int);
-  void fillMapEller(std::vector<std::vector<short>>, std::mt19937);
+  void fillMapAldousBroder(std::vector<std::vector<int>>, std::mt19937);
+  void fillMapEller(std::vector<std::vector<int>>, std::mt19937);
+  void createEdgeEller(int, bool, std::vector<std::vector<int>>);
 
 public:
   enum	algorithm_type {

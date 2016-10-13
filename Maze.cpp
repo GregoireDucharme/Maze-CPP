@@ -6,15 +6,17 @@
 /* Check if the 2D map of the maze still contains unexplored parts */
 #include <cstdlib>
 
-bool	Maze::checkMap(std::vector<std::vector<short>> map) const
+bool	Maze::checkMap(std::vector<std::vector<int>> map) const
 {
   int x = 0, y = 0;
+  int flag = true;
 
   system("clear");
   while (y < _height) {
     x = 0;
     while (x < _width) {
       if (map[x][y] == false) {
+	flag = false;
 	//return false;
       }
       std::cout << map[x][y] << "|";
@@ -24,6 +26,7 @@ bool	Maze::checkMap(std::vector<std::vector<short>> map) const
     y++;
   }
   std::cin.ignore();
+  return flag;
   return true;
 }
 
@@ -40,11 +43,50 @@ bool	Maze::initValues(int width, int height, unsigned int countEdges)
   return true;
 }
 
+void	Maze::createEdgeEller(int y, bool way, std::vector<std::vector<int>> map)
+{
+  int x = 0;
+
+  if (way == HORIZONTAL) {
+    int value = map[x][y];
+    /* Line to process */
+    while (x < _width) {
+      if (map[x][y] != value) {
+	value = map[x][y];
+	_countEdges++;
+	_edges.push_back(Edge(x, y, x, y + 1));
+	std::cout << "Creating edge " << x << " " << y << " " << x << " " << y + 1 << std::endl;
+	//std::cin.ignore();
+      }
+      if (y > 0 && map[x][y] != map[x][y - 1]) {
+	_countEdges++;
+	_edges.push_back(Edge(x, y, x + 1, y));
+	std::cout << "Creating edge 1 " << x << " " << y << " " << x + 1 << " " << y << std::endl;
+	std::cin.ignore(); 
+      }
+      x++;
+    }
+  }
+  else /* way == VERTICAL */ {
+    /*Column to process  */
+    while (x < _width) {
+      
+      if (map[x][y] == 0) {
+	_countEdges++;
+	_edges.push_back(Edge(x, y, x + 1, y));
+	std::cout << "Creating edge 0 " << x << " " << y << " " << x + 1 << " " << y << std::endl;
+	std::cin.ignore();
+      }
+      x++;
+    }
+  }
+}
+
 /* Filling the 2D map and instanciating the edges */
-void	Maze::fillMapEller(std::vector<std::vector<short>> map,
+void	Maze::fillMapEller(std::vector<std::vector<int>> map,
 			   std::mt19937 generator)
 {
-  int	x = 0, x1 = 0, y = 0, val = 0, prevValue = 0, minValue = 0;;
+  int	x = 0, y = 0, val = 0, previousValue = 0, minValue = 0;
   bool	check = false;
 
   while (y < _height) {
@@ -61,46 +103,61 @@ void	Maze::fillMapEller(std::vector<std::vector<short>> map,
     /* Merge randomly cells */
     x = 1;
     while (x < _width) {
-      if (map[x][y] > minValue && generator() % 2) {
-	map[x][y] = map[x - 1][y];
+      if (generator() % 2 == 0) {
+	if (map[x][y] > minValue)
+	  map[x][y] = map[x - 1][y];
+	else { /* Merging a cell already set */
+	  previousValue = map[x - 1][y];
+	  for (int tmpY = y; tmpY >= 0; tmpY--)
+	    for (int tmpX = x - 1; tmpX >= 0 && map[tmpX][y] == previousValue ; tmpX--) {
+	      map[tmpX][y] = map[x][y];
+	    }
+	}
       }
       x++;
     }
     checkMap(map);
+    createEdgeEller(y, HORIZONTAL, map);
     y++;
     check = false;
+    /* Add vertical connexion*/
     if (y < _height) {
       while (!check) {
 	x = 0;
 	while (x < _width) {
-	  if (map[x][y] == map[x][y - 1] || generator() % 2) {
+	  if ((x == 0 || map[x - 1][y] != map[x][y - 1]) &&
+	      generator() % 2 == 0) {
 	    map[x][y] = map[x][y - 1];
 	  }
 	  x++;
 	}
 	x = 0;
-	x1 = 0;
-	check = true;
+	check = false;
+	previousValue = map[x][y - 1];
 	while (x < _width) {
-	  while (x1 < _width) {
-	    if (map[x][y - 1] == map[x][y])
-	      x1 = _width;
-	    x1++;
-	  }
-	  if (x1 == _width)
-	    check = false;
-	  x++;
+	  if (map[x][y] == previousValue)
+	    check = true;
+	  if (map[x][y - 1] != previousValue && check == false)
+	    break;
+	  else if (map[x][y - 1] != previousValue && check == true)
+	    {
+	      previousValue = map[x][y - 1];
+	      if (x + 1 < _width)
+		check = false;
+	    }
+	  else
+	    x++;
 	}
 	checkMap(map);
       }
+      createEdgeEller(y, VERTICAL, map);
     }
   }
 }
-void	Maze::fillMapAldousBroder(std::vector<std::vector<short>> map,
-				  std::mt19937 generator,
-				  int x, int y)
+void	Maze::fillMapAldousBroder(std::vector<std::vector<int>> map,
+				  std::mt19937 generator)				
 {
-  int previousX, previousY, way;
+  int x = 0, y = 0, previousX, previousY, way;
   map[x][y] = true;
   while (!checkMap(map)) {
     previousX = x;
@@ -138,7 +195,7 @@ bool	Maze::loadNewMaze(int seed, int width, int height, algorithm_type type)
   if (initValues(width, height) == false) {
     return false;
   }
-  std::vector<std::vector<short>> map;
+  std::vector<std::vector<int>> map;
   map.resize(_width);
   int x = 0, y = 0;
   while (x < _width) {
@@ -151,12 +208,10 @@ bool	Maze::loadNewMaze(int seed, int width, int height, algorithm_type type)
     x++;
   }
   std::mt19937 generator(seed);
-  x = generator() % _width;
-  y = generator() % _height;
   switch (type)
     {
     case ALDOUS_BRODER:
-      fillMapAldousBroder(map, generator, x, y);
+      fillMapAldousBroder(map, generator);
       break;
     case ELLER:
       fillMapEller(map, generator);

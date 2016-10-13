@@ -124,7 +124,7 @@ bool	Parser::run()
       }
     }
     if (save_svg) {
-      std::cout << "Saving svg file"<<  save_svg_file << std ::endl;
+      std::cout << "Saving svg file "<<  save_svg_file << std ::endl;
       if (!maze.saveToSvgFile(save_svg_file)) {
 	std::cerr << "Could not save to svg file " << save_svg_file << std::endl;
       }
