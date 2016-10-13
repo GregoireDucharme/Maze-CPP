@@ -4,29 +4,20 @@
 #include "Maze.hh"
 
 /* Check if the 2D map of the maze still contains unexplored parts */
-#include <cstdlib>
-
 bool	Maze::checkMap(std::vector<std::vector<int>> map) const
 {
   int x = 0, y = 0;
-  int flag = true;
 
-  system("clear");
   while (y < _height) {
     x = 0;
     while (x < _width) {
       if (map[x][y] == false) {
-	flag = false;
-	//return false;
+	return false;
       }
-      std::cout << map[x][y] << "|";
       x++;
     }
-    std::cout << std::endl;
     y++;
   }
-  std::cin.ignore();
-  return flag;
   return true;
 }
 
@@ -55,14 +46,10 @@ void	Maze::createEdgeEller(int y, bool way, std::vector<std::vector<int>> map)
 	value = map[x][y];
 	_countEdges++;
 	_edges.push_back(Edge(x, y, x, y + 1));
-	std::cout << "Creating edge " << x << " " << y << " " << x << " " << y + 1 << std::endl;
-	//std::cin.ignore();
       }
       if (y > 0 && map[x][y] != map[x][y - 1]) {
 	_countEdges++;
 	_edges.push_back(Edge(x, y, x + 1, y));
-	std::cout << "Creating edge 1 " << x << " " << y << " " << x + 1 << " " << y << std::endl;
-	std::cin.ignore(); 
       }
       x++;
     }
@@ -74,8 +61,6 @@ void	Maze::createEdgeEller(int y, bool way, std::vector<std::vector<int>> map)
       if (map[x][y] == 0) {
 	_countEdges++;
 	_edges.push_back(Edge(x, y, x + 1, y));
-	std::cout << "Creating edge 0 " << x << " " << y << " " << x + 1 << " " << y << std::endl;
-	std::cin.ignore();
       }
       x++;
     }
@@ -108,10 +93,9 @@ void	Maze::fillMapEller(std::vector<std::vector<int>> map,
 	  map[x][y] = map[x - 1][y];
 	else { /* Merging a cell already set */
 	  previousValue = map[x - 1][y];
-	  for (int tmpY = y; tmpY >= 0; tmpY--)
-	    for (int tmpX = x - 1; tmpX >= 0 && map[tmpX][y] == previousValue ; tmpX--) {
-	      map[tmpX][y] = map[x][y];
-	    }
+	  for (int tmpX = x - 1; tmpX >= 0 && map[tmpX][y] == previousValue ; tmpX--) {
+	    map[tmpX][y] = map[x][y];
+	  }
 	}
       }
       x++;
