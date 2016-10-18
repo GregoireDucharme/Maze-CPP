@@ -5,6 +5,7 @@ SRC		= main.cpp \
 		Maze.cpp \
 		Edge.cpp \
 		Parser.cpp \
+		Cell.cpp \
 
 OBJ		= $(SRC:.cpp=.o)
 

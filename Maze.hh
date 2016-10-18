@@ -9,7 +9,7 @@
 # include <vector>
 # include <random>
 # include "Edge.hh"
-
+# include "Cell.hh"
 /* Int defined to make the switch condition more clear */
 const int LEFT = 0;
 const int RIGHT = 1;
@@ -33,6 +33,8 @@ class Maze {
   void fillMapAldousBroder(std::vector<std::vector<int>>, std::mt19937);
   void fillMapEller(std::vector<std::vector<int>>, std::mt19937);
   void createEdgeEller(int, bool, std::vector<std::vector<int>>);
+  bool checkCell(Cell);
+  bool getCells(std::vector<Cell>&, Cell);
 
 public:
   enum	algorithm_type {

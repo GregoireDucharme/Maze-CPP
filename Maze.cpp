@@ -3,6 +3,59 @@
 
 #include "Maze.hh"
 
+/* check if Cell is not and edge */
+bool	Maze::checkCell(Cell cell)
+{
+  int xA, xB, yA, yB;
+  for (unsigned int i = 0; i < _countEdges; i++) {
+    if (_edges[i].getxA() < _edges[i].getxB()) {
+      xA = _edges[i].getxA();
+      xB = _edges[i].getxB();
+    }
+    else {
+      xA = _edges[i].getxB();
+      xB = _edges[i].getxA();
+    }
+    if (_edges[i].getyA() < _edges[i].getyB()) {
+      yA = _edges[i].getyA();
+      yB = _edges[i].getxB();
+    }
+    else {
+      yA = _edges[i].getyB();
+      yB = _edges[i].getxA();
+    }
+    if (xA <= cell.getX() && xB >= cell.getX() &&
+	yA <= cell.getY() && yB >= cell.getY())
+      return false;
+  }
+  return true;
+}
+
+bool	Maze::getCells(std::vector<Cell> &cells, Cell current)
+{
+  int index = 0;
+  int deepness = current.getDeepness() + 1;
+  if (current.getX() > 0) {
+    if (checkCell(Cell(current.getX() - 1, current.getY())))
+      cells.push_back(Cell(current.getX() - 1, current.getY(), index++, deepness));
+  }
+  if (current.getX() < _width) {
+    if (checkCell(Cell(current.getX() + 1, current.getY())))
+      cells.push_back(Cell(current.getX() + 1, current.getY(), index++, deepness));
+  }
+  if (current.getY() > 0) {
+    if (checkCell(Cell(current.getX(), current.getY() - 1)))
+      cells.push_back(Cell(current.getX(), current.getY() - 1, index++, deepness));
+  }
+  if (current.getY() < _height) {
+    if (checkCell(Cell(current.getX(), current.getY() + 1)))
+      cells.push_back(Cell(current.getX(), current.getY() + 1, index++, deepness));
+  }
+  if (cells.size() == 0)
+    return false;
+  return true;
+}
+
 bool	Maze::solvePM()
 {
   return false;
@@ -20,6 +73,30 @@ bool	Maze::solvePB()
 
 bool	Maze::solvePD()
 {
+  std::vector<Cell> path;
+  std::vector<std::vector<Cell>> cells;
+  int i = 0, j = 0;
+  unsigned int index;
+  path.push_back(Cell());
+  while (1) {
+    getCells(cells[j], path[i]);
+    if (cells[j].size() > 0) {
+      path.push_back(cells[j][0]);
+      j++;
+    }
+    else {
+      index = path[i].getIndex() + 1;
+      path.pop_back();
+      i--;
+      j--;
+      if (cells[j].size() <= index)
+	return false;
+      path.push_back(cells[j][index]);
+    }
+    if (path[i].getX() == _width && path[i].getY() == _height)
+      return true;
+    i++;
+  }
   return false;
 }
 
