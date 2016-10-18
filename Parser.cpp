@@ -24,6 +24,22 @@ void	Parser::initGenerationAlgorithm(char *argv)
     new_maze_ge = true;
 }
 
+void	Parser::checkSolvingFlag(char *argv)
+{
+  if (!ARG_SOLVE_PM.compare(argv)) {
+    solving = Maze::PM;
+  }
+  else if (!ARG_SOLVE_PE.compare(argv)) {
+    solving = Maze::PE;
+  }
+  else if (!ARG_SOLVE_PB.compare(argv)) {
+    solving = Maze::PB;
+  }
+  else if (!ARG_SOLVE_PD.compare(argv)) {
+    solving = Maze::PD;
+  }
+}
+
 /* Only constructor of the Parser class */
 /* Usage de const char defined in Parser.hh */
 Parser::Parser(int ac, char **argv)
@@ -37,7 +53,7 @@ Parser::Parser(int ac, char **argv)
   seed = 0;
   width = 0;
   height = 0;
-
+  solving = Maze::NONE;
   for (int i = 0; i < ac; i++) {
     if (!ARG_LOAD_BINARY.compare(argv[i]) && ac > i + 1) {
       load_bin = true;
@@ -71,6 +87,7 @@ Parser::Parser(int ac, char **argv)
 	initGenerationAlgorithm(argv[i]);
       }
     }
+    checkSolvingFlag(argv[i]);
   }
 }
 
@@ -115,6 +132,11 @@ bool	Parser::run()
     std::cerr << "Or use "<< ARG_GA_SEED << " to generate one" << std::endl;
     std::cerr << "Or " << ARG_LOAD_BINARY <<" to load from binary file" << std::endl;
     return false;
+  }
+  if (solving != Maze::NONE) {
+    if (!maze.solveMaze(solving)) {
+      std::cerr << "Error, could not solve given maze" << std::endl;
+    }
   }
   if (maze.isValid()) {
     if (save_bin) {

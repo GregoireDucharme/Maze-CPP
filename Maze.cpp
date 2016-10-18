@@ -3,6 +3,48 @@
 
 #include "Maze.hh"
 
+bool	Maze::solvePM()
+{
+  return false;
+}
+
+bool	Maze::solvePE()
+{
+  return false;
+}
+
+bool	Maze::solvePB()
+{
+  return false;
+}
+
+bool	Maze::solvePD()
+{
+  return false;
+}
+
+/* Dispatch solving methog depending on solving type */
+bool	Maze::solveMaze(solving_type solving)
+{
+  switch (solving) {
+  case PM:
+    return solvePM();
+    break;
+  case PE:
+    return solvePE();
+    break;
+  case PB:
+    return solvePB();
+    break;
+  case PD:
+    return solvePD();
+    break;
+  default:
+    return false;
+    break;
+  }
+}
+
 /* Check if the 2D map of the maze still contains unexplored parts */
 bool	Maze::checkMap(std::vector<std::vector<int>> map) const
 {

@@ -31,6 +31,7 @@ class Parser {
   int new_maze_ge;
   bool save_bin;
   bool save_svg;
+  Maze::solving_type solving;
   std::string load_bin_file;
   std::string save_bin_file;
   std::string save_svg_file;
@@ -41,6 +42,7 @@ class Parser {
   bool isNumeric(char*) const;
   bool dispatchNewMaze();
   void initGenerationAlgorithm(char *);
+  void checkSolvingFlag(char *);
 
 public:
   Parser(int ac, char **argv);

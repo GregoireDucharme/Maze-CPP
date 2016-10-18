@@ -20,6 +20,10 @@ const bool HORIZONTAL = true;
 const bool VERTICAL = false;
 
 class Maze {
+  bool solvePM();
+  bool solvePE();
+  bool solvePB();
+  bool solvePD();
   int	_width = 0;
   int	_height = 0;
   unsigned int	_countEdges = 0;
@@ -35,12 +39,21 @@ public:
     ALDOUS_BRODER = 0,
     ELLER = 1
   };
-  Maze() {}
+  enum solving_type {
+    NONE = -1,
+    PM = 0,
+    PE = 1,
+    PB = 2,
+    PD = 3
+  };
+  Maze() {
+  }
   bool saveToSvgFile(std::string) const;
   bool saveToBinaryFile(std::string) const;
   bool isValid() const;
   bool loadFromBinaryFile(std::string);
   bool loadNewMaze(int, int, int, algorithm_type);
+  bool solveMaze(solving_type);
 };
 
 #endif
