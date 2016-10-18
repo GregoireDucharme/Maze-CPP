@@ -75,24 +75,30 @@ bool	Maze::solvePD()
 {
   std::vector<Cell> path;
   std::vector<std::vector<Cell>> cells;
-  int i = 0, j = 0;
+  int i = 0, j = -1;
+  bool check = true;
   unsigned int index;
   path.push_back(Cell());
   while (1) {
-    getCells(cells[j], path[i]);
+    if (check) {
+      cells.push_back(std::vector<Cell>());
+      getCells(cells[++j], path[i]);
+    }
     if (cells[j].size() > 0) {
       path.push_back(cells[j][0]);
-      j++;
+      check = true;
     }
     else {
       index = path[i].getIndex() + 1;
       path.pop_back();
       i--;
       j--;
-      if (cells[j].size() <= index)
-	return false;
-      path.push_back(cells[j][index]);
+      if (cells[j].size() > index)
+	path.push_back(cells[j][index]);
+      check = false;
     }
+    if (j == -1)
+      return false;
     if (path[i].getX() == _width && path[i].getY() == _height)
       return true;
     i++;
