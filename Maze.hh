@@ -28,6 +28,7 @@ class Maze {
   int	_height = 0;
   unsigned int	_countEdges = 0;
   std::vector<Edge>	_edges;
+  std::string _filename = "";
   bool checkMap(std::vector<std::vector<int>>) const;
   bool initValues(int, int, unsigned int = 0);
   void fillMapAldousBroder(std::vector<std::vector<int>>, std::mt19937);
@@ -35,6 +36,7 @@ class Maze {
   void createEdgeEller(int, bool, std::vector<std::vector<int>>);
   bool checkCell(Cell);
   bool getCells(std::vector<Cell>&, std::vector<Cell>);
+  void saveSolvedToSvg(std::vector<Cell>);
 
 public:
   enum	algorithm_type {
@@ -50,7 +52,7 @@ public:
   };
   Maze() {
   }
-  bool saveToSvgFile(std::string) const;
+  bool saveToSvgFile(std::string);
   bool saveToBinaryFile(std::string) const;
   bool isValid() const;
   bool loadFromBinaryFile(std::string);

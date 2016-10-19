@@ -18,14 +18,14 @@ bool	Maze::checkCell(Cell cell)
     }
     if (_edges[i].getyA() < _edges[i].getyB()) {
       yA = _edges[i].getyA();
-      yB = _edges[i].getxB();
+      yB = _edges[i].getyB();
     }
     else {
       yA = _edges[i].getyB();
-      yB = _edges[i].getxA();
+      yB = _edges[i].getyA();
     }
-    if (xA <= cell.getX() && xB >= cell.getX() &&
-	yA <= cell.getY() && yB >= cell.getY())
+    if (xA * 2 <= cell.getX() && xB * 2 >= cell.getX() &&
+	yA * 2 <= cell.getY() && yB * 2 >= cell.getY())
       return false;
   }
   return true;
@@ -43,7 +43,7 @@ bool	Maze::getCells(std::vector<Cell> &cells, std::vector<Cell> path)
       cells.push_back(tmp);
     }
   }
-  if (path.back().getX() < _width) {
+  if (path.back().getX() < _width * 2 - 1) {
     tmp = Cell(path.back().getX() + 1, path.back().getY(), index, deepness);
     if (tmp.isNotIn(path) && checkCell(tmp)) {
       tmp.setIndex(index++);
@@ -57,7 +57,7 @@ bool	Maze::getCells(std::vector<Cell> &cells, std::vector<Cell> path)
       cells.push_back(tmp);
     }
   }
-  if (path.back().getY() < _height) {
+  if (path.back().getY() < _height * 2 - 1) {
     tmp = Cell(path.back().getX(), path.back().getY() + 1, index, deepness);
     if (tmp.isNotIn(path) && checkCell(tmp)) {
       tmp.setIndex(index++);     
@@ -67,6 +67,35 @@ bool	Maze::getCells(std::vector<Cell> &cells, std::vector<Cell> path)
   if (cells.size() == 0)
     return false;
   return true;
+}
+
+void	Maze::saveSolvedToSvg(std::vector<Cell> path)
+{
+  std::ifstream file;
+  std::ofstream file_solved;
+  std::string line;
+
+  file.open(_filename.c_str());
+  file_solved.open("solved_" + _filename);
+  if (file.is_open() && file_solved.is_open()) {
+    while (getline(file, line)) {
+      if (line.compare("</svg>"))
+	file_solved << line << std::endl;
+    }
+    for (unsigned int i; i + 1 < path.size(); i++) {
+      file_solved << "<line";
+      file_solved << " x1=\""<< (path[i].getX() / 2 + 0.5) * SIZE_RATIO <<"\"";
+      file_solved << " y1=\""<< (path[i].getY() / 2 + 0.5) * SIZE_RATIO <<"\"";
+      file_solved << " x2=\""<< (path[i + 1].getX() / 2 + 0.5) * SIZE_RATIO <<"\"";
+      file_solved << " y2=\""<< (path[i + 1].getY() / 2 + 0.5) * SIZE_RATIO <<"\"";
+      file_solved << " stroke=\"red\" stroke-width=\"" <<
+	SIZE_RATIO / 2 << "\" />" << std::endl;
+      std::cout << path[i].getX() << " " << path[i].getY() <<std::endl;
+    }
+    file_solved << "</svg>" << std::endl;
+    file_solved.close();
+    file.close();
+  }
 }
 
 bool	Maze::solvePM()
@@ -91,7 +120,7 @@ bool	Maze::solvePD()
   int i = 0, j = -1;
   bool check = true;
   unsigned int index = 0;
-  path.push_back(Cell());
+  path.push_back(Cell(1, 1));
   while (1) {
     if (check) {
       cells.push_back(std::vector<Cell>());
@@ -112,8 +141,12 @@ bool	Maze::solvePD()
     }
     else
       return false;
-    if (path.back().getX() == _width && path.back().getY() == _height)
+    if (path.back().getX() == _width * 2 - 1 && path.back().getY() == _height * 2 - 1) {
+      if (_filename.compare("")) {
+	saveSolvedToSvg(path);
+      }
       return true;
+    }
     if (j == -1 || i == -1)
       return false;
   }
@@ -403,7 +436,7 @@ bool	Maze::saveToBinaryFile(std::string filename) const
   return false;
 }
 
-bool	Maze::saveToSvgFile(std::string filename) const
+bool	Maze::saveToSvgFile(std::string filename)
 {
   std::ofstream	file;
 
@@ -412,7 +445,7 @@ bool	Maze::saveToSvgFile(std::string filename) const
     file << "<svg width=\""<< _width * SIZE_RATIO;
     file <<"\" height=\""<< _height * SIZE_RATIO;
     file << "\" xmlns=\"http://www.w3.org/2000/svg\">" << std::endl;
-    file << "<rect width=\""<< _width * SIZE_RATIO;
+    file << "<rect x=\"0\" y =\"0\" width=\""<< _width * SIZE_RATIO;
     file << "\" height=\"" << _height * SIZE_RATIO;
     file << "\" style=\"fill:black\" />" << std::endl;
     for (unsigned int i = 0; i < _edges.size(); i++)
@@ -421,6 +454,7 @@ bool	Maze::saveToSvgFile(std::string filename) const
       }
     file << "</svg>" << std::endl;
     file.close();
+    _filename = filename;
     return true;
   }
   std::cerr << "Couldn't open file" << std::endl;
