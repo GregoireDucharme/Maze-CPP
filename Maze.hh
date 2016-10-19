@@ -34,7 +34,7 @@ class Maze {
   void fillMapEller(std::vector<std::vector<int>>, std::mt19937);
   void createEdgeEller(int, bool, std::vector<std::vector<int>>);
   bool checkCell(Cell);
-  bool getCells(std::vector<Cell>&, Cell);
+  bool getCells(std::vector<Cell>&, std::vector<Cell>);
 
 public:
   enum	algorithm_type {

@@ -7,7 +7,7 @@
 # include <iostream>
 # include <fstream>
 # include <cstring>
-
+# include <chrono>
 # include "Maze.hh"
 
 /* Flag used to defined the parameter of the binary file */

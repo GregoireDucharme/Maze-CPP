@@ -4,6 +4,8 @@
 #ifndef CELL_HH_
 # define CELL_HH_
 
+# include <vector>
+
 class Cell {
   int _x;
   int _y;
@@ -14,7 +16,9 @@ public:
   int getX() const;
   int getY() const;
   int getIndex() const;
+  void setIndex(int);
   int getDeepness() const;
+  bool isNotIn(std::vector<Cell>) const;
   Cell(int x = 0, int y = 0, int index = 0, int deepness = 0){
     _x = x;
     _y = y;

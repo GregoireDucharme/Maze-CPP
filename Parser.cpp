@@ -109,7 +109,7 @@ bool	Parser::dispatchNewMaze()
 bool	Parser::run()
 {
   // Check if parameter are correct
-  if (load_bin && new_maze && new_maze_ga && new_maze_ge) {
+  if (load_bin && !new_maze && !new_maze_ga && !new_maze_ge) {
     std::cout << "Loading binary file "<<  load_bin_file << std ::endl;
     if (!maze.loadFromBinaryFile(load_bin_file)) {
       std::cerr << "Could not load from binary file " << load_bin_file << std::endl;
@@ -133,11 +133,6 @@ bool	Parser::run()
     std::cerr << "Or " << ARG_LOAD_BINARY <<" to load from binary file" << std::endl;
     return false;
   }
-  if (solving != Maze::NONE) {
-    if (!maze.solveMaze(solving)) {
-      std::cerr << "Error, could not solve given maze" << std::endl;
-    }
-  }
   if (maze.isValid()) {
     if (save_bin) {
       std::cout << "Saving binary file"<<  save_bin_file << std ::endl;
@@ -149,6 +144,18 @@ bool	Parser::run()
       std::cout << "Saving svg file "<<  save_svg_file << std ::endl;
       if (!maze.saveToSvgFile(save_svg_file)) {
 	std::cerr << "Could not save to svg file " << save_svg_file << std::endl;
+      }
+    }
+    if (solving != Maze::NONE) {
+      auto start = std::chrono::steady_clock::now();
+      if (maze.solveMaze(solving)) {
+	auto end = std::chrono::steady_clock::now();
+	auto duration = std::chrono::duration_cast
+	  <std::chrono::milliseconds>(end - start);
+	std::cout << "Maze solved in "<< duration.count() << "ms" << std::endl;
+      }
+      else {
+	std::cerr << "Error, could not solve given maze" << std::endl;
       }
     }
   }

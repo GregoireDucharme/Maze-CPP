@@ -31,25 +31,38 @@ bool	Maze::checkCell(Cell cell)
   return true;
 }
 
-bool	Maze::getCells(std::vector<Cell> &cells, Cell current)
+bool	Maze::getCells(std::vector<Cell> &cells, std::vector<Cell> path)
 {
   int index = 0;
-  int deepness = current.getDeepness() + 1;
-  if (current.getX() > 0) {
-    if (checkCell(Cell(current.getX() - 1, current.getY())))
-      cells.push_back(Cell(current.getX() - 1, current.getY(), index++, deepness));
+  int deepness = path.back().getDeepness() + 1;
+  Cell tmp;
+  if (path.back().getX() > 0) {
+    tmp = Cell(path.back().getX() - 1, path.back().getY(), index, deepness);
+    if (tmp.isNotIn(path) && checkCell(tmp)) {
+      tmp.setIndex(index++);
+      cells.push_back(tmp);
+    }
   }
-  if (current.getX() < _width) {
-    if (checkCell(Cell(current.getX() + 1, current.getY())))
-      cells.push_back(Cell(current.getX() + 1, current.getY(), index++, deepness));
+  if (path.back().getX() < _width) {
+    tmp = Cell(path.back().getX() + 1, path.back().getY(), index, deepness);
+    if (tmp.isNotIn(path) && checkCell(tmp)) {
+      tmp.setIndex(index++);
+      cells.push_back(tmp);
+    }
   }
-  if (current.getY() > 0) {
-    if (checkCell(Cell(current.getX(), current.getY() - 1)))
-      cells.push_back(Cell(current.getX(), current.getY() - 1, index++, deepness));
+  if (path.back().getY() > 0) {
+    tmp = Cell(path.back().getX(), path.back().getY() - 1, index, deepness);
+    if (tmp.isNotIn(path) && checkCell(tmp)) {
+      tmp.setIndex(index++);    
+      cells.push_back(tmp);
+    }
   }
-  if (current.getY() < _height) {
-    if (checkCell(Cell(current.getX(), current.getY() + 1)))
-      cells.push_back(Cell(current.getX(), current.getY() + 1, index++, deepness));
+  if (path.back().getY() < _height) {
+    tmp = Cell(path.back().getX(), path.back().getY() + 1, index, deepness);
+    if (tmp.isNotIn(path) && checkCell(tmp)) {
+      tmp.setIndex(index++);     
+      cells.push_back(tmp);
+    }
   }
   if (cells.size() == 0)
     return false;
@@ -77,31 +90,32 @@ bool	Maze::solvePD()
   std::vector<std::vector<Cell>> cells;
   int i = 0, j = -1;
   bool check = true;
-  unsigned int index;
+  unsigned int index = 0;
   path.push_back(Cell());
   while (1) {
     if (check) {
       cells.push_back(std::vector<Cell>());
-      getCells(cells[++j], path[i]);
+      getCells(cells[++j], path);
+      index = 0;
     }
-    if (cells[j].size() > 0) {
-      path.push_back(cells[j][0]);
+    if (cells[j].size() > index) {
+      path.push_back(cells[j][index]);
       check = true;
+      i++;
     }
-    else {
-      index = path[i].getIndex() + 1;
-      path.pop_back();
-      i--;
+    else if (i >= 0) {
+      index = path[i--].getIndex() + 1;
+      cells.pop_back();
       j--;
-      if (cells[j].size() > index)
-	path.push_back(cells[j][index]);
+      path.pop_back();
       check = false;
     }
-    if (j == -1)
+    else
       return false;
-    if (path[i].getX() == _width && path[i].getY() == _height)
+    if (path.back().getX() == _width && path.back().getY() == _height)
       return true;
-    i++;
+    if (j == -1 || i == -1)
+      return false;
   }
   return false;
 }
