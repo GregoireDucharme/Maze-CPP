@@ -95,6 +95,7 @@ void	Maze::saveSolvedToSvg(std::vector<Cell> path)
     file_solved << "</svg>" << std::endl;
     file_solved.close();
     file.close();
+    std::cin.ignore();
   }
 }
 
@@ -110,6 +111,46 @@ bool	Maze::solvePE()
 
 bool	Maze::solvePB()
 {
+  std::vector<std::vector<Cell>> pathes;
+  std::vector<std::vector<Cell>> cells;
+  std::vector<Cell> tmp, tmp_to_push;
+  unsigned int i = 0, k = 0;
+  int j = -1;
+  bool check = true;
+
+  pathes.push_back(std::vector<Cell>());
+  pathes.back().push_back(Cell(1, 1));
+  while (check) {
+    check = false;
+    i = 0;
+    while (i < pathes.size()) {
+      cells.push_back(std::vector<Cell>());
+      getCells(cells[++j], pathes[i]);
+      k = 0;
+      tmp = pathes[i];
+      while (k < cells[j].size()) {
+	tmp_to_push = tmp;
+	if (k == 0)
+	  pathes[i].push_back(cells[j][k]);
+	else {
+	  tmp_to_push.push_back(cells[j][k]);
+	  pathes.push_back(tmp_to_push);
+	}
+	if (cells[j][k].getX() == _width * 2 - 1 &&
+	    cells[j][k].getY() == _height * 2 - 1) {
+	  if (_filename.compare("")) {
+	    tmp.push_back(cells[j][k]);
+	    saveSolvedToSvg(tmp);
+	  }
+	  return true;
+
+	}
+	check = true;
+	k++;
+      }
+      i++;
+    }
+  }
   return false;
 }
 
@@ -313,7 +354,7 @@ void	Maze::fillMapEller(std::vector<std::vector<int>> map,
 void	Maze::fillMapAldousBroder(std::vector<std::vector<int>> map,
 				  std::mt19937 generator)				
 {
-  int x = 0, y = 0, previousX, previousY, way;
+  int x = generator() % _width, y = generator() % _height, previousX, previousY, way;
   map[x][y] = true;
   while (!checkMap(map)) {
     previousX = x;
@@ -325,7 +366,7 @@ void	Maze::fillMapAldousBroder(std::vector<std::vector<int>> map,
 	x--;
       break;
     case RIGHT:
-      if (x < _width - 1)
+      if (x < _width)
 	x++;
       break;
     case UP:
@@ -333,7 +374,7 @@ void	Maze::fillMapAldousBroder(std::vector<std::vector<int>> map,
 	y--;
       break;
     case DOWN:
-      if (y < _height - 1)
+      if (y < _height)
 	y++;
       break;
     }
@@ -352,12 +393,12 @@ bool	Maze::loadNewMaze(int seed, int width, int height, algorithm_type type)
     return false;
   }
   std::vector<std::vector<int>> map;
-  map.resize(_width);
+  map.resize(_width + 1);
   int x = 0, y = 0;
-  while (x < _width) {
+  while (x <= _width) {
     y = 0;
-    map[x].resize(_height);
-    while (y < _height) {
+    map[x].resize(_height + 1);
+    while (y <= _height) {
       map[x][y] = 0;
       y++;
     }

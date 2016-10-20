@@ -1,6 +1,15 @@
 /* Gregoire DUCHARME */
 /* 22/08/2016 */
 
+Solvable mazes:
+./mazer --g 18046 20 20
+./mazer --g 6408 15 15
+./mazer --g 1443 25 25
+./mazer --g 18061 7 7
+./mazer --g 17952 8 15
+./mazer --g 20180 10 12
+./mazer --g 18915 6 20
+
 To compile the code use Makefile:
 
 Makefile usage:
