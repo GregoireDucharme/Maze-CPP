@@ -46,7 +46,6 @@ class Parser {
 
 public:
   Parser(int ac, char **argv);
-  bool isValid() const;
   bool run();
 };
 

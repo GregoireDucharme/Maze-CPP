@@ -5,15 +5,14 @@
 
 int	main(int ac, char **argv)
 {
+  /* Constructor of parser parse each argv, looking for flags */
   Parser	parser(ac, argv);
 
   /* End of the funnel of return, if false is returned then errors message is displayed */
-  if (parser.isValid()) {
-    if (!parser.run()) {
-      std::cerr << "An error occured" << std::endl;
-    };
-  }
-  else {
+  if (!parser.run()) {
+  /* Display usage */
+    std::cerr << "An error occured" << std::endl;
+    std::cout << "Usage:" << std::endl;
     std::cout << "./mazer --lb filename.maze -- sv filename.svg";
     std::cout << "#load binary file and save svg file" << std::endl;
     std::cout << "./mazer --g seed --sb filename.maze";
@@ -36,6 +35,7 @@ int	main(int ac, char **argv)
     std::cout << "# solve the maze using Breadth First Search" << std::endl;
     std::cout << "./mazer --pd … " << std::endl;
     std::cout << "#solve the maze using depth first search." << std::endl;
+    return -1;
   }
   return 0;
 }

@@ -5,9 +5,7 @@
 # define _EDGE_HH_
 
 # include <iostream>
-
-/* Define the size ratio for the SVG file */
-const int SIZE_RATIO = 26;
+# include "SizeRatio.hh"
 
 class Edge {
 

@@ -7,6 +7,7 @@
 bool	Maze::checkCell(Cell cell)
 {
   int xA, xB, yA, yB;
+  /* Get the minimum value for each position so that the "if" condition is easier */
   for (unsigned int i = 0; i < _countEdges; i++) {
     if (_edges[i].getxA() < _edges[i].getxB()) {
       xA = _edges[i].getxA();
@@ -36,6 +37,8 @@ bool	Maze::getCells(std::vector<Cell> &cells, std::vector<Cell> path)
   int index = 0;
   int deepness = path.back().getDeepness() + 1;
   Cell tmp;
+
+  /* Check if the surrounding cells are walls and have been visited in the current path */
   if (path.back().getX() > 0) {
     tmp = Cell(path.back().getX() - 1, path.back().getY(), index, deepness);
     if (tmp.isNotIn(path) && checkCell(tmp)) {
@@ -64,11 +67,13 @@ bool	Maze::getCells(std::vector<Cell> &cells, std::vector<Cell> path)
       cells.push_back(tmp);
     }
   }
+  /* Dead end */
   if (cells.size() == 0)
     return false;
   return true;
 }
 
+/* Copy the maze svg file and add the solution in red line  */
 void	Maze::saveSolvedToSvg(std::vector<Cell> path)
 {
   std::ifstream file;
@@ -83,13 +88,7 @@ void	Maze::saveSolvedToSvg(std::vector<Cell> path)
 	file_solved << line << std::endl;
     }
     for (unsigned int i; i + 1 < path.size(); i++) {
-      file_solved << "<line";
-      file_solved << " x1=\""<< (path[i].getX() / 2 + 0.5) * SIZE_RATIO <<"\"";
-      file_solved << " y1=\""<< (path[i].getY() / 2 + 0.5) * SIZE_RATIO <<"\"";
-      file_solved << " x2=\""<< (path[i + 1].getX() / 2 + 0.5) * SIZE_RATIO <<"\"";
-      file_solved << " y2=\""<< (path[i + 1].getY() / 2 + 0.5) * SIZE_RATIO <<"\"";
-      file_solved << " stroke=\"red\" stroke-width=\"" <<
-	SIZE_RATIO / 2 << "\" />" << std::endl;
+      file_solved << &path[i] << std::endl;
       std::cout << path[i].getX() << " " << path[i].getY() <<std::endl;
     }
     file_solved << "</svg>" << std::endl;
@@ -109,6 +108,7 @@ bool	Maze::solvePE()
   return false;
 }
 
+/* Solving breadth first */
 bool	Maze::solvePB()
 {
   std::vector<std::vector<Cell>> pathes;
@@ -123,11 +123,13 @@ bool	Maze::solvePB()
   while (check) {
     check = false;
     i = 0;
+    /* Checking possible path for each path instanciated */
     while (i < pathes.size()) {
       cells.push_back(std::vector<Cell>());
       getCells(cells[++j], pathes[i]);
       k = 0;
       tmp = pathes[i];
+      /* Then instanciated all possible path */
       while (k < cells[j].size()) {
 	tmp_to_push = tmp;
 	if (k == 0)
@@ -136,6 +138,7 @@ bool	Maze::solvePB()
 	  tmp_to_push.push_back(cells[j][k]);
 	  pathes.push_back(tmp_to_push);
 	}
+	/* Bottom right corner */
 	if (cells[j][k].getX() == _width * 2 - 1 &&
 	    cells[j][k].getY() == _height * 2 - 1) {
 	  if (_filename.compare("")) {
@@ -154,6 +157,7 @@ bool	Maze::solvePB()
   return false;
 }
 
+/* Solving depth first */
 bool	Maze::solvePD()
 {
   std::vector<Cell> path;
@@ -162,7 +166,10 @@ bool	Maze::solvePD()
   bool check = true;
   unsigned int index = 0;
   path.push_back(Cell(1, 1));
+  /* infinite loop */
+  /* Stop if all path have been explored and couldn't reach to bottom right corner */
   while (1) {
+    /* Check the cells around current position */
     if (check) {
       cells.push_back(std::vector<Cell>());
       getCells(cells[++j], path);
@@ -182,6 +189,7 @@ bool	Maze::solvePD()
     }
     else
       return false;
+    /* Bottom right corner */
     if (path.back().getX() == _width * 2 - 1 && path.back().getY() == _height * 2 - 1) {
       if (_filename.compare("")) {
 	saveSolvedToSvg(path);
@@ -360,6 +368,7 @@ void	Maze::fillMapAldousBroder(std::vector<std::vector<int>> map,
     previousX = x;
     previousY = y;
     way = generator() % 4;
+    /* Randomize the way to explore */
     switch (way) {
     case LEFT:
       if (x > 0)
@@ -491,6 +500,7 @@ bool	Maze::saveToSvgFile(std::string filename)
     file << "\" style=\"fill:black\" />" << std::endl;
     for (unsigned int i = 0; i < _edges.size(); i++)
       {
+	/* Operator oveload */
 	file << _edges[i] << std::endl;
       }
     file << "</svg>" << std::endl;

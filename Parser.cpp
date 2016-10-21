@@ -41,7 +41,7 @@ void	Parser::checkSolvingFlag(char *argv)
 }
 
 /* Only constructor of the Parser class */
-/* Usage de const char defined in Parser.hh */
+/* Usage of const char defined in Parser.hh */
 Parser::Parser(int ac, char **argv)
 {
   load_bin = false;
@@ -71,6 +71,7 @@ Parser::Parser(int ac, char **argv)
 	      !ARG_GA_SEED.compare(argv[i]) ||
 	      !ARG_GE_SEED.compare(argv[i])) &&
 	     ac > i + 2) {
+      /* Check if a seed is specified */
       if (ac > i + 3 && isNumeric(argv[i + 1]) &&
 	  isNumeric(argv[i + 2]) &&
 	  isNumeric(argv[i + 3])) {
@@ -79,6 +80,7 @@ Parser::Parser(int ac, char **argv)
 	height = std::stoi(argv[i + 3]);
 	initGenerationAlgorithm(argv[i]);
       }
+      /* Else the seed is set to time(0) */
       else if (isNumeric(argv[i + 1]) &&
 	       isNumeric(argv[i + 2])) {
 	seed = time(0);
@@ -89,11 +91,6 @@ Parser::Parser(int ac, char **argv)
     }
     checkSolvingFlag(argv[i]);
   }
-}
-
-bool Parser::isValid() const
-{
-  return true;
 }
 
 bool	Parser::dispatchNewMaze()

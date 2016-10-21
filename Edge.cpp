@@ -17,6 +17,7 @@ std::ostream&	operator<<(std::ostream& os, Edge edge)
   return os;
 }
 
+/* Can't create an Edge without specifing his coordinates */
 Edge::Edge(int xA, int yA, int xB, int yB)
 {
   _xA = xA;
@@ -25,6 +26,7 @@ Edge::Edge(int xA, int yA, int xB, int yB)
   _yB =yB;
 }
 
+/* Default getter */
 int Edge::getxA() const
 {
   return _xA;
@@ -41,3 +43,5 @@ int Edge::getyB() const
 {
   return _yB;
 }
+
+/* No setter since an edge cannot be modified once created */

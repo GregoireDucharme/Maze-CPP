@@ -4,7 +4,9 @@
 #ifndef CELL_HH_
 # define CELL_HH_
 
+# include <iostream>
 # include <vector>
+# include "SizeRatio.hh"
 
 class Cell {
   int _x;
@@ -32,5 +34,7 @@ public:
     _deepness = old.getDeepness();
   }
 };
+
+std::ostream& operator<<(std::ostream& os, Cell *cell);
 
 #endif /* CELL_HH_ */

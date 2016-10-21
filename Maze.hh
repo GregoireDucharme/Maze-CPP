@@ -10,12 +10,14 @@
 # include <random>
 # include "Edge.hh"
 # include "Cell.hh"
+
 /* Int defined to make the switch condition more clear */
 const int LEFT = 0;
 const int RIGHT = 1;
 const int UP = 2;
 const int DOWN = 3;
 
+/* Use in eller algorithm to know the way of the edges */
 const bool HORIZONTAL = true;
 const bool VERTICAL = false;
 
@@ -39,7 +41,8 @@ class Maze {
   void saveSolvedToSvg(std::vector<Cell>);
 
 public:
-  enum	algorithm_type {
+  /* Enum use to make condition more clear */
+  enum algorithm_type {
     ALDOUS_BRODER = 0,
     ELLER = 1
   };
@@ -60,4 +63,4 @@ public:
   bool solveMaze(solving_type);
 };
 
-#endif
+#endif /* _MAZE_HH_ */
