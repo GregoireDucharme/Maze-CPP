@@ -1,5 +1,6 @@
 /* Gregoire DUCHARME */
-/* 06/08/2016 */
+/* Yixuan Zhang */
+/* 23/10/2016 */
 
 #ifndef _PARSER_HH_
 # define _PARSER_HH_

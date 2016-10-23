@@ -1,5 +1,6 @@
 /* Gregoire DUCHARME */
-/* 18/10/2016 */
+/* Yixuan Zhang */
+/* 23/10/2016 */
 
 #ifndef CELL_HH_
 # define CELL_HH_

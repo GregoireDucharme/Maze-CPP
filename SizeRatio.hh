@@ -1,5 +1,6 @@
 /* Gregoire DUCHARME */
-/* 21/10/2016 */
+/* Yixuan Zhang */
+/* 23/10/2016 */
 
 #ifndef _SIZERATION_HH_
 # define _SIZERATION_HH_

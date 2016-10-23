@@ -1,5 +1,6 @@
 /* Gregoire DUCHARME */
-/* 03/08/2016 */
+/* Yixuan Zhang */
+/* 23/10/2016 */
 
 #ifndef _EDGE_HH_
 # define _EDGE_HH_

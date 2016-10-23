@@ -1,5 +1,6 @@
 /* Gregoire DUCHARME */
-/* 03/08/2016 */
+/* Yixuan Zhang */
+/* 23/10/2016 */
 
 #ifndef _MAZE_HH_
 # define _MAZE_HH_

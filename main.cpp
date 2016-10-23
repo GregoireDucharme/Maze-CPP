@@ -1,5 +1,6 @@
 /* Gregoire DUCHARME */
-/* 02/08/2016 */
+/* Yixuan Zhang */
+/* 23/10/2016 */
 
 #include "Parser.hh"
 
