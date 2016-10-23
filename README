@@ -1,6 +1,8 @@
 /* Gregoire DUCHARME */
 /* 22/08/2016 */
 
+Use "./test" to start working and non working test
+
 Solvable mazes:
 ./mazer --g 18046 20 20
 ./mazer --g 6408 15 15
@@ -36,4 +38,4 @@ Mazer binary usage:
 If wrong arguments are provided to the "mazer" binary file or the case of an error, errors messages should be displayed in the standard error output
 
 You can change the size of the maze displayed from the "svg" file by modifying:
-"const int SIZE_RATIO" fount in "Edge.hh" file
+"const int SIZE_RATIO" found in "SizeRatio.hh" file

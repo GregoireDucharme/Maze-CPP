@@ -89,23 +89,21 @@ void	Maze::saveSolvedToSvg(std::vector<Cell> path)
     }
     for (unsigned int i; i + 1 < path.size(); i++) {
       file_solved << &path[i] << std::endl;
-      std::cout << path[i].getX() << " " << path[i].getY() <<std::endl;
     }
     file_solved << "</svg>" << std::endl;
     file_solved.close();
     file.close();
-    std::cin.ignore();
   }
 }
 
 bool	Maze::solvePM()
 {
-  return false;
+  return solvePB();
 }
 
 bool	Maze::solvePE()
 {
-  return false;
+  return solvePB();
 }
 
 /* Solving breadth first */

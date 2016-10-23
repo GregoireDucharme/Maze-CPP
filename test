@@ -1,0 +1,63 @@
+make
+
+echo
+echo "*** Usage test ***"
+./mazer
+echo
+./mazer --sv fail.svg
+echo
+./mazer --g 10
+echo
+./mazer --sb
+echo "******"
+
+echo
+echo "*** OK test ***"
+
+rm -rf svg
+mkdir svg
+
+./mazer --g 18046 20 20 --sv svg/20_20.svg --pd
+echo
+./mazer --g 6408 15 15 --sv svg/15_15.svg --pb
+echo
+./mazer --g 1443 25 25 --sv svg/25_25.svg --pd
+echo
+./mazer --g 18061 7 7 --sv svg/7_7.svg --pb
+echo
+./mazer --g 17952 8 15 --sv svg/8_15.svg --pd
+echo
+./mazer --g 20180 10 12 --sv svg/10_12.svg --pb
+echo
+./mazer --g 18915 6 20 --sv svg/6_20.svg --pd
+echo "******"
+
+echo
+echo "*** test ***"
+
+rm -rf bin
+mkdir bin
+
+./mazer --ge $RANDOM 10 10 --sb bin/test_10_10.maze --sv svg/test_10_10.svg --pd
+echo
+./mazer --ge 20 15 --sv svg/test_eller_20_15.svg --pb
+echo
+./mazer --ga 15 15 --sv svg/test_alduin_15_15.svg --pb
+echo
+./mazer --lb bin/test_10_10.maze --sb bin/test_10_10_1.maze --sv svg/test_10_10_1.svg --pd
+echo "******"
+
+echo "*** Diff between test_10_10 and test_10_10_1 ***"
+diff bin/test_10_10.maze bin/test_10_10_1.maze
+diff svg/test_10_10.svg svg/test_10_10_1.svg
+echo "******"
+
+echo "*** File created ***"
+ls -la svg
+echo
+ls -la bin
+echo "******"
+
+
+echo "*** CLEAN ***"
+make clean
